@@ -4,8 +4,7 @@ inc = include_directories('include')
 
 thread_dep = dependency('threads')
 
-lib = library('google_benchmark',
-  ['src/benchmark.cc',
+src = ['src/benchmark.cc',
    'src/commandlineflags.cc',
    'src/csv_reporter.cc',
    'src/statistics.cc',
@@ -20,7 +19,15 @@ lib = library('google_benchmark',
    'src/colorprint.cc',
    'src/counter.cc',
    'src/sleep.cc',
-   'src/timers.cc'],
+   'src/timers.cc']
+
+lib_static  = static_library('google_benchmark', src,
    include_directories : inc, dependencies: thread_dep)
 
-benchmark_dep = declare_dependency(include_directories : inc, link_with : lib)
+lib_dynamic = shared_library('google_benchmark', src,
+   include_directories : inc, dependencies: thread_dep)
+
+benchmark_dep_static = declare_dependency(include_directories : inc,
+                                          link_with : lib_static)
+
+benchmark_dep_dynamic = declare_dependency(include_directories : inc, link_with : lib_dynamic)
